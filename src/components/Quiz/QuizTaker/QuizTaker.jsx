@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Box, Button, Typography, Radio, RadioGroup, FormControlLabel, LinearProgress } from '@mui/material'
-import { ArrowBack, ArrowForward } from '@mui/icons-material'
+import { Box, Button, Typography, LinearProgress, IconButton } from '@mui/material'
+import { ArrowBack, ArrowForward, Visibility, VisibilityOff } from '@mui/icons-material'
 import Modal from '../Modal'
 
 const QuizTaker = ({ open, onClose, quiz }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState({})
   const [showResults, setShowResults] = useState(false)
   const [score, setScore] = useState(0)
+  const [hiddenQuestions, setHiddenQuestions] = useState(new Set())
 
   const currentQuestion = quiz?.questions?.[currentQuestionIndex]
-
-  const handleAnswer = (questionId, answer) => {
-    setAnswers(prev => ({ ...prev, [questionId]: answer }))
-  }
 
   const handleNext = () => {
     if (currentQuestionIndex < (quiz?.questions?.length || 0) - 1) {
@@ -29,25 +25,30 @@ const QuizTaker = ({ open, onClose, quiz }) => {
     }
   }
 
+  const toggleQuestionVisibility = () => {
+    setHiddenQuestions(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(currentQuestion.id)) {
+        newSet.delete(currentQuestion.id)
+      } else {
+        newSet.add(currentQuestion.id)
+      }
+      return newSet
+    })
+  }
+
   const calculateResults = () => {
     if (!quiz?.questions) return
     
-    let correctCount = 0
-    quiz.questions.forEach(question => {
-      if (answers[question.id] === question.answer) {
-        correctCount++
-      }
-    })
-    
-    setScore(correctCount)
+    setScore(quiz.questions.length)
     setShowResults(true)
   }
 
   const handleRestart = () => {
     setCurrentQuestionIndex(0)
-    setAnswers({})
     setShowResults(false)
     setScore(0)
+    setHiddenQuestions(new Set())
   }
 
   const handleFinish = () => {
@@ -88,19 +89,23 @@ const QuizTaker = ({ open, onClose, quiz }) => {
               {currentQuestion.question}
             </Typography>
             
-            <RadioGroup
-              value={answers[currentQuestion.id] || ''}
-              onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-            >
-              {currentQuestion.options.map((option, index) => (
-                <FormControlLabel 
-                  key={index} 
-                  value={option} 
-                  control={<Radio />}
-                  label={option}
-                />
-              ))}
-            </RadioGroup>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Typography variant="body2" sx={{ 
+                mr: 2,
+                opacity: hiddenQuestions.has(currentQuestion.id) ? 0 : 1,
+                transition: 'opacity 0.3s ease-in-out'
+              }}>
+                {hiddenQuestions.has(currentQuestion.id) ? 'Odgovor nije dostupan' : currentQuestion.answer || 'Odgovor nije dostupan'}
+              </Typography>
+              
+              <IconButton
+                onClick={toggleQuestionVisibility}
+                size="small"
+                title={hiddenQuestions.has(currentQuestion.id) ? 'Prikaži odgovor' : 'Sakrij odgovor'}
+              >
+                {hiddenQuestions.has(currentQuestion.id) ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </Box>
           </Box>
         ) : (
           /* Results */
@@ -108,15 +113,11 @@ const QuizTaker = ({ open, onClose, quiz }) => {
             <Typography variant="h4" sx={{ mb: 2 }}>
               Rezultati
             </Typography>
-            <Typography variant="h3" sx={{ mb: 2, color: quiz?.questions ? (score >= quiz.questions.length * 0.8 ? 'success.main' : 'warning.main') : 'text.secondary' }}>
-              Vaš rezultat: {score}/{quiz?.questions?.length || 0}
+            <Typography variant="h3" sx={{ mb: 2, color: 'success.main' }}>
+              Kviz završen!
             </Typography>
             <Typography variant="body1" sx={{ mb: 3 }}>
-              {quiz?.questions ? (
-                score >= quiz.questions.length * 0.8 
-                  ? 'Čestitamo! Odličan ste prošli kviz.' 
-                  : `Pokušajte ponovo. Potrebno je ${quiz.questions.length * 0.8 - score} tačnih odgovora za prolaz.`
-              ) : 'Nema pitanja za prikazivanje rezultata.'}
+              Uspješno ste pregledali sva pitanja.
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3 }}>
               <Button 

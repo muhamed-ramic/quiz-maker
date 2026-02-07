@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Box, Button, Typography, Radio, RadioGroup, FormControlLabel, LinearProgress, IconButton } from '@mui/material'
 import { ArrowBack, ArrowForward, Visibility, VisibilityOff } from '@mui/icons-material'
+import { useNavigate } from "react-router-dom";
 
 const QuizTaker = () => {
+  const navigate = useNavigate();
   const [quiz, setQuiz] = useState(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState({})
@@ -84,7 +86,7 @@ const QuizTaker = () => {
 
   const handleFinish = () => {
     // Could save results to localStorage here
-    window.close()
+    navigate("/")
   }
 
   if (!quiz) {
@@ -129,14 +131,12 @@ const QuizTaker = () => {
               color={hiddenQuestions.has(currentQuestion.id) ? 'default' : 'primary'}
               title={hiddenQuestions.has(currentQuestion.id) ? 'Prikaži pitanje' : 'Sakrij pitanje'}
             >
-              {hiddenQuestions.has(currentQuestion.id) ? <VisibilityOff /> : <Visibility />}
+              {hiddenQuestions.has(currentQuestion.id) ? <VisibilityOff sx={{ color: "white"}} /> : <Visibility sx={{ color: "white" }} />}
             </IconButton>
           </Box>
           
           <Typography variant="h6" sx={{ 
             mb: 2, 
-            opacity: hiddenQuestions.has(currentQuestion.id) ? 0.3 : 1,
-            transition: 'opacity 0.3s ease-in-out'
           }}>
             {currentQuestion.question}
           </Typography>
@@ -148,31 +148,6 @@ const QuizTaker = () => {
           }}>
             {hiddenQuestions.has(currentQuestion.id) ? 'Odgovor nije dostupan' : currentQuestion.answer || 'Odgovor nije dostupan'}
           </Typography>
-          
-          <RadioGroup
-            value={answers[currentQuestion.id] || ''}
-            onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
-            disabled={hiddenQuestions.has(currentQuestion.id)}
-          >
-            {currentQuestion.options ? (
-              currentQuestion.options.map((option, index) => (
-                <FormControlLabel 
-                  key={index} 
-                  value={option} 
-                  control={<Radio />}
-                  label={option}
-                  disabled={hiddenQuestions.has(currentQuestion.id)}
-                />
-              ))
-            ) : (
-              <FormControlLabel 
-                value="true" 
-                control={<Radio />}
-                label="Točno"
-                disabled={hiddenQuestions.has(currentQuestion.id)}
-              />
-            )}
-          </RadioGroup>
         </Box>
       ) : (
         /* Results */
@@ -213,20 +188,24 @@ const QuizTaker = () => {
       {!showResults && quiz?.questions && (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Button 
-            variant="outlined" 
+            variant="contained" 
             startIcon={<ArrowBack />}
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
+            sx={{mr: "5px"}}
           >
-            Prethodno
+            Nazad
           </Button>
           <Button 
             variant="contained" 
             startIcon={<ArrowForward />}
             onClick={handleNext}
           >
-            {currentQuestionIndex === quiz.questions.length - 1 ? 'Završi' : 'Sljedeće'}
+            {currentQuestionIndex === quiz.questions.length - 1 ? 'Završi' : 'Naprijed'}
           </Button>
+          <Button sx={{ ml: "5px" }} variant="contained" onClick={handleFinish}>
+          Izađi
+        </Button>
         </Box>
       )}
     </Box>

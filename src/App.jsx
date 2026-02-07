@@ -13,7 +13,7 @@ import {
   TextField,
   Box
 } from '@mui/material'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { Edit, Delete, Add, PlayArrow } from '@mui/icons-material'
 import initialQuizzes from './data/quizzes.json'
 import CreateModal from './components/Quiz/CreateModal/CreateModal'
@@ -161,17 +161,15 @@ function App() {
                     >
                       <TableCell>{quiz.name}</TableCell>
                       <TableCell align="right">
-                        <IconButton
-                          color="primary"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleStartQuiz(quiz)
-                          }}
-                          size="small"
-                          title="Pokreni kviz"
-                        >
-                          <PlayArrow />
-                        </IconButton>
+                        <Link to={`/quiz-taker?quiz=${quiz.name}`}>
+                          <IconButton
+                            color="primary"
+                            size="small"
+                            title="Pokreni kviz"
+                          >
+                            <PlayArrow />
+                          </IconButton>
+                        </Link>
                         <IconButton
                           color="primary"
                           onClick={(e) => {
