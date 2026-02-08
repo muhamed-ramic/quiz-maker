@@ -13,7 +13,7 @@ import {
   TextField,
   Box
 } from '@mui/material'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { Edit, Delete, Add, PlayArrow } from '@mui/icons-material'
 import initialQuizzes from './data/quizzes.json'
 import CreateModal from './components/Quiz/CreateModal/CreateModal'

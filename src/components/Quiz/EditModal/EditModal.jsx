@@ -4,13 +4,13 @@ import { Add, Delete } from '@mui/icons-material'
 import Modal from '../../Modal'
 
 const EditModal = ({ open, onClose, onSave, quiz }) => {
-  const [quizName, setQuizName] = useState('')
+  const [quizName, setQuizName] = useState(' ')
   const [questions, setQuestions] = useState([])
 
   useEffect(() => {
     if (quiz) {
       setQuizName(quiz.name)
-      setQuestions(quiz.questions.length > 0 ? quiz.questions : [{ question: '', answer: '' }])
+      setQuestions(quiz.questions.length > 0 ? quiz.questions : [{ question: ' ', answer: ' ' }])
     }
   }, [quiz])
 
@@ -33,7 +33,7 @@ const EditModal = ({ open, onClose, onSave, quiz }) => {
   }
 
   const addQuestion = () => {
-    setQuestions([...questions, { question: '', answer: '' }])
+    setQuestions([...questions, { question: ' ', answer: ' ' }])
   }
 
   const removeQuestion = (index) => {
@@ -82,8 +82,8 @@ const EditModal = ({ open, onClose, onSave, quiz }) => {
           value={quizName}
           onChange={(e) => setQuizName(e.target.value)}
           placeholder="Unesite ime kviza..."
-          error={!quizName.trim()}
-          helperText={!quizName.trim() ? 'Ime kviza ne može biti prazno' : ''}
+          error={quizName == ""}
+          helperText={quizName == "" ? 'Ime kviza ne može biti prazno' : ''}
         />
 
         <Box>
@@ -112,8 +112,8 @@ const EditModal = ({ open, onClose, onSave, quiz }) => {
                 onChange={(e) => updateQuestion(index, 'question', e.target.value)}
                 placeholder="Unesite pitanje..."
                 sx={{ mb: 1 }}
-                error={!q.question.trim()}
-                helperText={!q.question.trim() ? 'Pitanje ne može biti prazno' : ''}
+                error={q.question == ""}
+                helperText={q.question == "" ? 'Pitanje ne može biti prazno' : ''}
               />
               
               <TextField
@@ -124,8 +124,8 @@ const EditModal = ({ open, onClose, onSave, quiz }) => {
                 onChange={(e) => updateQuestion(index, 'answer', e.target.value)}
                 placeholder="Unesite odgovor..."
                 sx={{ mb: 1 }}
-                error={!q.answer.trim()}
-                helperText={!q.answer.trim() ? 'Odgovor ne može biti prazan' : ''}
+                error={q.answer == ""}
+                helperText={q.answer == "" ? 'Odgovor ne može biti prazan' : ''}
               />
 
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>

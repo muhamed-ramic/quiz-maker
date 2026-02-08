@@ -31,7 +31,7 @@ const CreateModal = ({ open, onClose, onSave }) => {
   }
 
   const addQuestion = () => {
-    setQuestions([...questions, { question: '', answer: '' }])
+    setQuestions([...questions, { question: ' ', answer: ' ' }])
   }
 
   const removeQuestion = (index) => {
