@@ -14,6 +14,10 @@ const QuizTaker = () => {
 
   const currentQuestion = quiz?.questions?.[currentQuestionIndex]
 
+  useEffect(()=> {
+    setHiddenQuestions(new Set(quiz?.questions?.map(question => question.id)))
+  }, [quiz])
+
   // Get quiz ID from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -30,7 +34,6 @@ const QuizTaker = () => {
       setAnswers({})
       setShowResults(false)
       setScore(0)
-      setHiddenQuestions(new Set())
     }
   }, [window.location.search]) // Rerun when URL changes
 
@@ -146,7 +149,7 @@ const QuizTaker = () => {
             opacity: hiddenQuestions.has(currentQuestion.id) ? 0.3 : 1,
             transition: 'opacity 0.3s ease-in-out'
           }}>
-            {hiddenQuestions.has(currentQuestion.id) ? 'Odgovor nije dostupan' : currentQuestion.answer || 'Odgovor nije dostupan'}
+            {hiddenQuestions.has(currentQuestion.id) ? 'Odgovor nije dostupan.' : currentQuestion.answer || 'Odgovor nije dostupan'}
           </Typography>
         </Box>
       ) : (
